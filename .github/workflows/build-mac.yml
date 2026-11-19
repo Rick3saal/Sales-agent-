@@ -18,7 +18,20 @@ jobs:
       - run: npm ci
       - run: npm test
       - name: Build unsigned Mac installers
-        run: npm run dist:mac
+        shell: bash
+        run: |
+          set +e
+          npm run dist:mac > build-log.txt 2>&1
+          result=$?
+          cat build-log.txt
+          if [ "$result" -ne 0 ]; then
+            details=$(tail -c 5000 build-log.txt)
+            details="${details//'%'/'%25'}"
+            details="${details//$'\n'/'%0A'}"
+            details="${details//$'\r'/'%0D'}"
+            echo "::error::$details"
+          fi
+          exit "$result"
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
       - uses: actions/upload-artifact@v4
