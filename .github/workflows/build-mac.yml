@@ -4,7 +4,7 @@ on:
     branches: ['arena/d9ae4a19-sales-agent']
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   build:
     runs-on: macos-latest
@@ -40,3 +40,11 @@ jobs:
           path: dist/*.dmg
           if-no-files-found: error
           retention-days: 30
+      - name: Publish installers to a GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "flightdesk-build-${GITHUB_RUN_ID}" dist/*.dmg \
+            --target "$GITHUB_SHA" --prerelease \
+            --title "Flightdesk Mac preview" \
+            --notes "Unsigned, non-notarized preview. Choose arm64 for Apple silicon or x64 for Intel. An OpenAI API key is required. See README for audio routing, consent and limitations."
