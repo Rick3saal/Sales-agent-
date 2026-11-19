@@ -1,0 +1,50 @@
+{
+  "name": "flightdesk-copilot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "desktop": "electron .",
+    "dist:mac": "electron-builder --mac dmg --arm64 --x64"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "multer": "^2.5.0"
+  },
+  "main": "electron-main.cjs",
+  "build": {
+    "appId": "com.flightdesk.copilot",
+    "productName": "Flightdesk",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron-main.cjs",
+      "preload.cjs",
+      "server.js",
+      "public/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.business",
+      "target": [
+        "dmg"
+      ],
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "Flightdesk needs microphone access to transcribe calls you choose to capture.",
+        "NSAudioCaptureUsageDescription": "Flightdesk needs audio capture access to transcribe call audio you choose to share.",
+        "NSScreenCaptureUsageDescription": "Flightdesk needs screen capture permission when you choose to share call audio."
+      }
+    },
+    "dmg": {
+      "artifactName": "Flightdesk-${version}-${arch}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^37.10.3",
+    "electron-builder": "^26.18.0"
+  }
+}
