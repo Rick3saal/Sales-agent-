@@ -1,7 +1,7 @@
 name: Build Mac installer
 on:
   push:
-    branches: ['arena/d9ae4a19-sales-agent']
+    branches: ['arena/*']
   workflow_dispatch:
 permissions:
   contents: write
@@ -17,7 +17,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - name: Build unsigned Mac installers
+      - name: Build ad-hoc signed Mac installers
         shell: bash
         run: |
           set +e
@@ -33,7 +33,18 @@ jobs:
           fi
           exit "$result"
         env:
+          # Identity "-" in package.json forces ad-hoc signing with hardened
+          # runtime. Without it the app is fully unsigned and Gatekeeper
+          # reports it as "damaged" when downloaded from a browser.
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - name: Verify ad-hoc signatures
+        shell: bash
+        run: |
+          set -e
+          # Fail the build if the app is not signed; an unsigned app is what
+          # triggers the "damaged and can't be opened" Gatekeeper alert.
+          find dist -name 'Flightdesk.app' -print -exec codesign --verify --deep --strict {} \;
+          find dist -name 'Flightdesk.app' -exec codesign -dv --verbose=4 {} \; 2>&1 || true
       - uses: actions/upload-artifact@v4
         with:
           name: Flightdesk-Mac-installers
@@ -48,4 +59,4 @@ jobs:
           gh release create "flightdesk-build-${GITHUB_RUN_ID}" dist/*.dmg \
             --target "$GITHUB_SHA" --prerelease \
             --title "Flightdesk Mac preview" \
-            --notes "Unsigned, non-notarized preview. Choose arm64 for Apple silicon or x64 for Intel. An OpenAI API key is required. See README for audio routing, consent and limitations."
+            --notes "Ad-hoc signed, non-notarized preview (no Apple Developer ID). Choose arm64 for Apple silicon or x64 for Intel. macOS may still block it on first open because the browser marks the download as quarantined — see README 'If macOS says damaged' for the one-time allow steps. An OpenAI API key is required. See README for audio routing, consent and limitations."

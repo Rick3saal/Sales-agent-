@@ -33,6 +33,12 @@
       "target": [
         "dmg"
       ],
+      "identity": "-",
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": false,
+      "gatekeeperAssess": false,
       "extendInfo": {
         "NSMicrophoneUsageDescription": "Flightdesk needs microphone access to transcribe calls you choose to capture.",
         "NSAudioCaptureUsageDescription": "Flightdesk needs audio capture access to transcribe call audio you choose to share.",

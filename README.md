@@ -4,7 +4,24 @@ A prototype for English-language call transcription, short live sales coaching, 
 
 ## Mac desktop app
 
-Download the matching `.dmg` from the GitHub release: `arm64` for Apple silicon (M-series) or `x64` for Intel. Open it and drag Flightdesk to Applications, then open Flightdesk. These builds are **not Apple-notarized** and macOS may block them. Only if you trust this build, use the macOS Privacy & Security controls to allow it. This is not an Apple-signed or verified release.
+Download the matching `.dmg` from the GitHub release: `arm64` for Apple silicon (M-series) or `x64` for Intel. Open it and drag Flightdesk to Applications, then open Flightdesk. These builds are **ad-hoc signed but not Apple-notarized** (no Apple Developer ID), so macOS may still block them on first open. This is not an Apple-signed or verified release. Only allow it if you trust this build from this repo.
+
+### If macOS says "damaged and can't be opened"
+
+Do **not** move it to the Trash — the file is usually fine. This alert appears when a browser (e.g. Chrome) downloads the app: the browser marks it as quarantined, and Gatekeeper blocks quarantined apps that aren't notarized. Older fully-unsigned builds triggered this "damaged" alert with no way to allow them; current builds are ad-hoc signed with hardened runtime, so you should get an "unidentified developer" prompt with an Open button instead. If you still see "damaged", clear the quarantine flag once:
+
+1. Drag `Flightdesk.app` to `/Applications` (if you haven't yet).
+2. Open Terminal and run:
+
+   ```sh
+   xattr -dr com.apple.quarantine /Applications/Flightdesk.app
+   ```
+
+3. Open Flightdesk again. It should launch.
+
+Alternatives: right-click (or Control-click) the app → Open → Open, or go to System Settings → Privacy & Security and choose "Open Anyway" for Flightdesk if that button appears. Downloading the `.dmg` with `curl -L -o Flightdesk.dmg <url>` in Terminal also avoids the quarantine flag, since only browsers add it.
+
+If it still won't open, check you downloaded the right architecture (`arm64` for M-series, `x64` for Intel — run `uname -m` in Terminal to check) and re-download the `.dmg` from the release.
 
 When prompted, paste your OpenAI API key into Settings and click Save. You can reopen Settings anytime. Credentials are encrypted using the OS secure storage and stored in Flightdesk's user data on your Mac; blank fields retain saved values, and Remove saved credentials deletes them. An OpenAI API account with billing is required. Optionally add Amadeus Self-Service credentials for flight search. Do not put credentials in GitHub or chat.
 
