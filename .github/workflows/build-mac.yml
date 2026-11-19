@@ -1,7 +1,7 @@
 name: Build Mac installer
 on:
   push:
-    branches: ['arena/d9ae4a19-sales-agent']
+    branches: ['arena/ae5ceb39-sales-agent']
   workflow_dispatch:
 permissions:
   contents: write
